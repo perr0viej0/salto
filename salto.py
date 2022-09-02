@@ -5,7 +5,7 @@ import sys
 import os
 from time import sleep
 
-comandos = ["instala","actualiza","reset","ping","info"]	# comandos soportados por salto.py
+comandos = ["instala","actualiza","reset","ping","info","list_users"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto.py debe ser ejecutado como usuario root")	# no root, no fun
