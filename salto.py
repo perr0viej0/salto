@@ -13,7 +13,7 @@ if os.geteuid() != 0:
 else:
 	if len(sys.argv) == 1:
 		print("salto.py --help para ayuda")		# ejecucion sin parametros
-
+		sys.exit()
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza y reset")
