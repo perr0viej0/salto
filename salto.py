@@ -4,7 +4,7 @@ import subprocess
 import sys
 import os
 
-comandos = ["instala","actualiza","reset","ping"]	# comandos soportados por salto.py
+comandos = ["instala","actualiza","reset","ping","info"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto.py debe ser ejecutado como usuario root")	# no root, no fun
@@ -15,21 +15,26 @@ else:
 
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: ping, instala, actualiza y reset")
+		print("Comandos disponibles: info, ping, instala, actualiza y reset")
 		print("Ej.: sudo salto.py TOTAL-RDP actualiza")
 		sys.exit()
 	elif len(sys.argv) == 2:
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: ping, instala, actualiza y reset")
+		print("Comandos disponibles: info, ping, instala, actualiza y reset")
 		print("Ej.: sudo salto.py TOTAL-RDP actualiza")
 	elif len(sys.argv) == 3:				# comprobar q el comando
 		if sys.argv[2] not in comandos:			# este en aceptados
 			print("ERROR: no entiendo el comando")
-			print("Los comandos disponibles son: ping, instala, actualiza y reset")
+			print("Los comandos disponibles son: info, ping, instala, actualiza y reset")
 			sys.exit()
 try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	comando = sys.argv[2]	# probamos por si acaso
 
+	if comando.lower() == "info":
+		makina = sys.argv[1]
+		print("Doxeando.........")
+		sleep(1)
+		subprocess.run(["salt", makina, "grains.items"])
 
 	if comando.lower() == "actualiza":		# update de minions
 		makina = sys.argv[1]
