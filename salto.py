@@ -5,7 +5,7 @@ import sys
 import os
 from time import sleep
 
-comandos = ["instala","actualiza","reset","ping","info","list_users"]	# comandos soportados por salto.py
+comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto.py debe ser ejecutado como usuario root")	# no root, no fun
@@ -85,6 +85,12 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			makina = sys.argv[1]
 			print("Preguntando la lista de usuarios de", makina)
 			subprocess.run(["salt", makina, "cmd.run", "net users"])
+	elif comando.lower() == "ejecutar":
+			makina = sys,argv[1]
+			coman = sys.argv[3]
+			coman = str(coman)
+			print("Ejecuntando", coman)
+			suprocess.run(["salt",makina,"cmd.run",coman])
 except IndexError:
 		print("Uno o mas argumentos son incorrectos, revisa el oneliner")
 
