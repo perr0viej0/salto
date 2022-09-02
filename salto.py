@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import os
+from time import sleep
 
 comandos = ["instala","actualiza","reset","ping","info"]	# comandos soportados por salto.py
 
@@ -16,12 +17,26 @@ else:
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza y reset")
-		print("Ej.: sudo salto.py TOTAL-RDP actualiza")
+		print("info: devuelve los valores de los grains del minion seleccionado")
+		print("ping: realiza un test ping para ver si la maquina esta levantada")
+		print("instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("actualiza: actualiza windows del minion seleccionado")
+		print("reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
+		print("Ej.: sudo salto.py MINION actualiza")
+		print("Ej.: sudo salto.py MINION instala malwarebytes")
+		print("Ej.: sudo salto.py MINION reset pepe abc123")
 		sys.exit()
 	elif len(sys.argv) == 2:
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza y reset")
-		print("Ej.: sudo salto.py TOTAL-RDP actualiza")
+		print("info: devuelve los valores de los grains del minion seleccionado")
+		print("ping: realiza un test ping para ver si la maquina esta levantada")
+		print("instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("actualiza: actualiza windows del minion seleccionado")
+		print("reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
+		print("Ej.: sudo salto.py MINION actualiza")
+		print("Ej.: sudo salto.py MINION instala malwarebytes")
+		print("Ej.: sudo salto.py MINION reset pepe abc123")
 	elif len(sys.argv) == 3:				# comprobar q el comando
 		if sys.argv[2] not in comandos:			# este en aceptados
 			print("ERROR: no entiendo el comando")
