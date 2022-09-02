@@ -79,6 +79,10 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			str = "net user "+user+" "+passwd
 			print("Reseteando pass para",user," // Nueva password:",passwd)
 			subprocess.run(["salt", makina, "cmd.run",str])
+	elif comando.lower() == "list_users":	# lista los users del minion
+			makina = sys.argv[1]
+			print("Preguntando la lista de usuarios de", makina)
+			subprocess.run(["salt", makina, "cmd.run", "net users"])
 except IndexError:
 		print("Uno o mas argumentos son incorrectos, revisa el oneliner")
 
