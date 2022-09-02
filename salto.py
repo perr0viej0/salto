@@ -88,11 +88,11 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			print("Preguntando la lista de usuarios de", makina)
 			subprocess.run(["salt", makina, "cmd.run", "net users"])
 	elif comando.lower() == "ejecutar":
-			makina = sys,argv[1]
+			makina = sys.argv[1]
 			coman = sys.argv[3]
 			coman = str(coman)
 			print("Ejecuntando", coman)
-			suprocess.run(["salt",makina,"cmd.run",coman])
+			subprocess.run(["salt",makina,"cmd.run",coman])
 except IndexError:
 		print("Uno o mas argumentos son incorrectos, revisa el oneliner")
 
