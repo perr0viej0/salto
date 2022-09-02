@@ -91,7 +91,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			makina = sys.argv[1]
 			coman = sys.argv[3]
 			coman = str(coman)
-			print("Ejecuntando", coman)
+			print("Ejecuctando", coman)
 			subprocess.run(["salt",makina,"cmd.run",coman])
 except IndexError:
 		print("Uno o mas argumentos son incorrectos, revisa el oneliner")
