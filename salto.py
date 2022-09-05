@@ -1,11 +1,21 @@
 #!/usr/bin/python3
+"""COSAS POR HACER:
+- Cambiar sistema de instalacion pkg.install por chocolatey.install
+- usar el modulo win_task para crear y modificar tareas programadas en los minions
+usuario system, dayly rep 1 hora start time
+crear eliminar y modificar listar
+
+- Ordenar el Help"""
+
+
+
 
 import subprocess
 import sys
 import os
 from time import sleep
 
-comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar"]	# comandos soportados por salto.py
+comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar", "tareas"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto.py debe ser ejecutado como usuario root")	# no root, no fun
@@ -17,13 +27,15 @@ else:
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users y ejecutar")
-		print("info: devuelve los valores de los grains del minion seleccionado")
-		print("ping: realiza un test ping para ver si la maquina esta levantada")
-		print("instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
-		print("actualiza: actualiza windows del minion seleccionado")
-		print("reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
-		print("list_users: devuelve lista de usuarios en el minion ")
-		print("ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (poner comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
+		print("* info: devuelve los valores de los grains del minion seleccionado")
+		print("* ping: realiza un test ping para ver si la maquina esta levantada")
+		print("* instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("* actualiza: actualiza windows del minion seleccionado")
+		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
+		print("* list_users: devuelve lista de usuarios en el minion ")
+		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
 		print("Ej.: sudo salto.py MINION actualiza")
 		print("Ej.: sudo salto.py MINION instala malwarebytes")
 		print("Ej.: sudo salto.py MINION reset pepe abc123")
@@ -31,16 +43,19 @@ else:
 	elif len(sys.argv) == 2:
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users y ejecutar")
-		print("info: devuelve los valores de los grains del minion seleccionado")
-		print("ping: realiza un test ping para ver si la maquina esta levantada")
-		print("instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
-		print("actualiza: actualiza windows del minion seleccionado")
-		print("reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
-		print("list_users: devuelve lista de usuarios en el minion ")
-		print("ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (poner comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
+		print("* info: devuelve los valores de los grains del minion seleccionado")
+		print("* ping: realiza un test ping para ver si la maquina esta levantada")
+		print("* instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("* actualiza: actualiza windows del minion seleccionado")
+		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
+		print("* list_users: devuelve lista de usuarios en el minion ")
+		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
 		print("Ej.: sudo salto.py MINION actualiza")
 		print("Ej.: sudo salto.py MINION instala malwarebytes")
 		print("Ej.: sudo salto.py MINION reset pepe abc123")
+		sys.exit()
 	elif len(sys.argv) >= 3:				# comprobar q el comando
 		if sys.argv[2] not in comandos:			# este en aceptados
 			print("ERROR: no entiendo el comando")
@@ -71,7 +86,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 		else:
 				makina = sys.argv[1]
 				print("Instalando",sys.argv[3],"en",makina,"...")
-				subprocess.run(["salt",makina,"pkg.install",sys.argv[3]])
+				subprocess.run(["salt",makina,"chocolatey.install",sys.argv[3]])
 
 	elif comando.lower() == "reset":		# reset user y pass minion
 		if len(sys.argv) != 5:
@@ -93,6 +108,41 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			coman = str(coman)
 			print("Ejecutando", coman)
 			subprocess.run(["salt",makina,"cmd.run",coman])
+
+#BLOQUE TAREAS EN DESARROLLO
+
+	elif comando.lower() == "tareas":
+		print("Tareas.....")
+		if len(sys.argv) != 4:
+			print("Error: debes especificar una accion para tareas")
+		else:
+			subcom = ["crear", "eliminar"]
+			if sys.argv[3] not in subcom:
+				print("Error: no puedo", sys.argv[3],"una tarea")
+			elif sys.argv[3] == "crear":
+				nom = input("Nombre de la tarea: ")
+				cmd = "'"
+				cmd = cmd + input("Comando a ejecutar: ")
+				cmd = cmd + "'"
+				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd)
+				sino = ["si","no"]
+				resp = input("Proceder: si o no? ")
+				while resp not in sino:
+					print("ERROR: debes responder 'si' o 'no'")
+					resp = input("Proceder: si o no? ")
+				if resp.lower() == "si":
+					print("Ejecutar win.task_create")
+				elif resp.lower() == "no":
+					print("Cancelando....")
+					sys.exit()
+
+
+
+
+#FIN BLOQUE DE TAREAS
+
+
+
 except IndexError:
 		print("Uno o mas argumentos son incorrectos, revisa el oneliner")
 
