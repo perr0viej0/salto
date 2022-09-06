@@ -134,9 +134,13 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				print("Error: no puedo", sys.argv[3],"una tarea")
 			elif sys.argv[3] == "crear":
 				nom = input("Nombre de la tarea: ")
-				cmd = "cmd="
+				cmd = "cmd='"
 				cmd = cmd + input("Comando a ejecutar: ")
+				cmd = cmd + "'"
 				trigger = ""
+				args = "arguments='"
+				args = args + input("Argumentos del comando: ")
+				args = args + "'"
 				trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
 				trigs = ["1","2"]
 				while trigger not in trigs:
@@ -158,8 +162,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					resp = input("Proceder: si o no? ")
 				if resp.lower() == "si":
 					print("Ejecutando win.task_create en",makina,"....")
-					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute",cmd, trigger,hora])
-					print(makina)
+					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute", cmd, args, trigger, hora])
 				elif resp.lower() == "no":
 					print("Cancelando....")
 					sys.exit()
