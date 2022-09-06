@@ -26,7 +26,7 @@ else:
 		sys.exit()
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users y ejecutar")
+		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
@@ -35,6 +35,12 @@ else:
 		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
 		print("* list_users: devuelve lista de usuarios en el minion ")
 		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
+		print("* tareas <ACCION>")
+		print("* tareas crear: crea una tarea programada en el minion")
+		print("* tareas eliminar: elimina una tarea programada del minion")
+		print("* tareas listar: lista todas las tareas programadas del minion")
+		print("* tareas info: devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
 		print("Ej.: sudo salto.py MINION actualiza")
 		print("Ej.: sudo salto.py MINION instala malwarebytes")
@@ -42,7 +48,7 @@ else:
 		sys.exit()
 	elif len(sys.argv) == 2:
 		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users y ejecutar")
+		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
@@ -51,6 +57,12 @@ else:
 		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
 		print("* list_users: devuelve lista de usuarios en el minion ")
 		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("----------------------------------------------------------------------------------")
+		print("* tareas <ACCION>")
+		print("* tareas crear: crea una tarea programada en el minion")
+		print("* tareas eliminar: elimina una tarea programada del minion")
+		print("* tareas listar: lista todas las tareas programadas del minion")
+		print("* tareas info: devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
 		print("Ej.: sudo salto.py MINION actualiza")
 		print("Ej.: sudo salto.py MINION instala malwarebytes")
@@ -114,17 +126,16 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	elif comando.lower() == "tareas":
 		print("Tareas.....")
 		if len(sys.argv) != 4:
-			print("Error: debes especificar una accion para tareas\nAcciones: crear, listar y eliminar")
+			print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
 		else:
-			subcom = ["crear", "eliminar", "listar"]
+			subcom = ["crear", "eliminar", "listar","info"]
 			makina = sys.argv[1]
 			if sys.argv[3] not in subcom:
 				print("Error: no puedo", sys.argv[3],"una tarea")
 			elif sys.argv[3] == "crear":
 				nom = input("Nombre de la tarea: ")
-				cmd = "cmd='"
+				cmd = "cmd="
 				cmd = cmd + input("Comando a ejecutar: ")
-				cmd = cmd + "'"
 				trigger = ""
 				trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
 				trigs = ["1","2"]
@@ -137,7 +148,8 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					trigger = "trigger_type=Daily"
 				print("Seleccionaste", trigger)
 				x = input("Hora de inicio de tarea: ")
-				hora = "start_time="+x
+				x = str(x)
+				hora = "start_time=\'"+x+"\'"
 				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd)
 				sino = ["si","no"]
 				resp = input("Proceder: si o no? ")
@@ -145,7 +157,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					print("ERROR: debes responder 'si' o 'no'")
 					resp = input("Proceder: si o no? ")
 				if resp.lower() == "si":
-					print("Ejecutar win.task_create")
+					print("Ejecutando win.task_create en",makina,"....")
 					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute",cmd, trigger,hora])
 					print(makina)
 				elif resp.lower() == "no":
