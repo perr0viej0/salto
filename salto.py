@@ -18,14 +18,14 @@ from time import sleep
 comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar", "tareas"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
-	print("ERROR: salto.py debe ser ejecutado como usuario root")	# no root, no fun
+	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
 	sys.exit()
 else:
 	if len(sys.argv) == 1:
-		print("salto.py --help para ayuda")		# ejecucion sin parametros
+		print("salto --help para ayuda")		# ejecucion sin parametros
 		sys.exit()
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
-		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
+		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
@@ -36,18 +36,18 @@ else:
 		print("* list_users: devuelve lista de usuarios en el minion ")
 		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
 		print("----------------------------------------------------------------------------------")
-		print("* tareas <ACCION>")
+		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
-		print("* tareas eliminar: elimina una tarea programada del minion")
+		print("* tareas eliminar (tarea): elimina una tarea programada del minion.")
 		print("* tareas listar: lista todas las tareas programadas del minion")
-		print("* tareas info: devuelve info de una tarea concreta del minion")
+		print("* tareas info (tarea): devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
-		print("Ej.: sudo salto.py MINION actualiza")
-		print("Ej.: sudo salto.py MINION instala malwarebytes")
-		print("Ej.: sudo salto.py MINION reset pepe abc123")
+		print("Ej.: sudo salto MINION actualiza")
+		print("Ej.: sudo salto MINION instala malwarebytes")
+		print("Ej.: sudo salto MINION reset pepe abc123\n")
 		sys.exit()
 	elif len(sys.argv) == 2:
-		print("salto.py\nUSO: salto.py <MAQUINA> <COMANDO>")
+		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
@@ -58,15 +58,15 @@ else:
 		print("* list_users: devuelve lista de usuarios en el minion ")
 		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
 		print("----------------------------------------------------------------------------------")
-		print("* tareas <ACCION>")
+		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
-		print("* tareas eliminar: elimina una tarea programada del minion")
+		print("* tareas eliminar (tarea): elimina una tarea programada del minion")
 		print("* tareas listar: lista todas las tareas programadas del minion")
-		print("* tareas info: devuelve info de una tarea concreta del minion")
+		print("* tareas info (tarea): devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
-		print("Ej.: sudo salto.py MINION actualiza")
-		print("Ej.: sudo salto.py MINION instala malwarebytes")
-		print("Ej.: sudo salto.py MINION reset pepe abc123")
+		print("Ej.: sudo salto MINION actualiza")
+		print("Ej.: sudo salto MINION instala malwarebytes")
+		print("Ej.: sudo salto MINION reset pepe abc123\n")
 		sys.exit()
 	elif len(sys.argv) >= 3:				# comprobar q el comando
 		if sys.argv[2] not in comandos:			# este en aceptados
@@ -76,7 +76,7 @@ else:
 try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	comando = sys.argv[2]	# probamos por si acaso
 
-	if comando.lower() == "info":
+	if comando.lower() == "info":	# info de la maquina
 		makina = sys.argv[1]
 		print("Doxeando.........")
 		sleep(1)
@@ -125,14 +125,14 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 
 	elif comando.lower() == "tareas":
 		print("Tareas.....")
-		if len(sys.argv) < 4:
+		if len(sys.argv) < 4:	# lo has escrito bien?
 			print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
 		else:
-			subcom = ["crear", "eliminar", "listar","info"]
+			subcom = ["crear", "eliminar", "listar","info"]	# args disponibles
 			makina = sys.argv[1]
 			if sys.argv[3] not in subcom:
 				print("Error: no puedo", sys.argv[3],"una tarea")
-			elif sys.argv[3] == "crear":
+			elif sys.argv[3] == "crear":		# crear tarea
 				nom = input("Nombre de la tarea: ")
 				cmd = "cmd='"
 				cmd = cmd + input("Comando a ejecutar: ")
@@ -143,7 +143,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				args = args + "'"
 				trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
 				trigs = ["1","2"]
-				while trigger not in trigs:
+				while trigger not in trigs:	# bucle, o 1 o 2
 					print("Error: selecciona 1 o 2")
 					trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
 				if trigger == "1":
@@ -157,48 +157,48 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd, "y argumentos", args)
 				sino = ["si","no"]
 				resp = input("Proceder: si o no? ")
-				while resp not in sino:
+				while resp not in sino:	# bucle, o si o no
 					print("ERROR: debes responder 'si' o 'no'")
 					resp = input("Proceder: si o no? ")
-				if resp.lower() == "si":
+				if resp.lower() == "si":		# creamos tarea
 					print("Ejecutando win.task_create en",makina,"....")
 					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute", cmd, args, trigger, hora])
-				elif resp.lower() == "no":
+				elif resp.lower() == "no":		# cancelamos
 					print("Cancelando....")
 					sys.exit()
-			elif sys.argv[3] == "listar":
+			elif sys.argv[3] == "listar":		# listar tareas
 				makina = sys.argv[1]
 				subprocess.run(["salt", makina, "task.list_tasks"])
 				sys.exit()
 
-			elif sys.argv[3] == "eliminar":
+			elif sys.argv[3] == "eliminar": # eliminar treas
 				makina = sys.argv[1]
-				if len(sys.argv) == 5:
+				if len(sys.argv) == 5: # si paso la tarea como arg, borrala
 					print("Eliminando la tarea",sys.argv[4])
 					subprocess.run(["salt", makina, "task.delete_task", sys.argv[4]])
 					sys.exit()
-				elif len(sys.argv) == 4:
+				elif len(sys.argv) == 4: # si no te la paso, dejame elegir
 					subprocess.run(["salt", makina, "task.list_tasks"])
 					print("Estas son las tareas disponibles.")
 					victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
 					subprocess.run(["salt", makina, "task.delete_task", victim])
 					sys.exit()
-				elif len(sys.argv) > 5:
+				elif len(sys.argv) > 5:		# demasiadas tareas para un solo script
 					print("Error: Las tareas se eliminan de una en una.\nError de sintaxis.")
 					sys.exit()
-			elif sys.argv[3] == "info":
+			elif sys.argv[3] == "info":		# info tareas
 				makina = sys.argv[1]
-				if len(sys.argv) == 5:
+				if len(sys.argv) == 5:		# si te paso la tarea como arg, doxeala
 					print("Doxeando la tarea", sys.argv[4])
 					subprocess.run(["salt", makina, "task.info", sys.argv[4]])
 					sys.exit()
-				elif len(sys.argv) == 4:
+				elif len(sys.argv) == 4:		# si no te la paso, dejame elegir
 					subprocess.run(["salt", makina, "task.list_tasks"])
 					print("Estas son las tareas disponibles.")
 					victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
 					subprocess.run(["salt", makina, "task.info", victim])
 					sys.exit()
-				elif len(sys.argv) > 5:
+				elif len(sys.argv) > 5:		# demasiadas tareas a doxear
 					print("Error: Las tareas se doxean de una en una.\nError de sintaxis.")
 					sys.exit()
 
