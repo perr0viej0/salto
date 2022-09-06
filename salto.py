@@ -125,7 +125,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 
 	elif comando.lower() == "tareas":
 		print("Tareas.....")
-		if len(sys.argv) != 4:
+		if len(sys.argv) < 4:
 			print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
 		else:
 			subcom = ["crear", "eliminar", "listar","info"]
@@ -173,11 +173,18 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 
 			elif sys.argv[3] == "eliminar":
 				makina = sys.argv[1]
-				subprocess.run(["salt", makina, "task.list_tasks"])
-				print("Estas son las tareas disponibles.")
-				victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
-				subprocess.run(["salt", makina, "task.delete_task", victim])
-				sys.exit()
+				if len(sys.argv) == 5:
+					print("Eliminando la tarea",sys.argv[4])
+					subprocess.run(["salt", makina, "task.delete_task", sys.argv[4]])
+					sys.exit()
+				elif len(sys.argv) == 4:
+					subprocess.run(["salt", makina, "task.list_tasks"])
+					print("Estas son las tareas disponibles.")
+					victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
+					subprocess.run(["salt", makina, "task.delete_task", victim])
+					sys.exit()
+				elif len(sys.argv) > 5:
+					print("Error: Las tareas se eliminan de una en una.\nError de sintaxis.")
 			elif sys.argv[3] == "info":
 				makina = sys.argv[1]
 				subprocess.run(["salt", makina, "task.list_tasks"])
