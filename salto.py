@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """COSAS POR HACER:
-- Cambiar sistema de instalacion pkg.install por chocolatey.install
+-
 - usar el modulo win_task para crear y modificar tareas programadas en los minions
 usuario system, dayly rep 1 hora start time
 crear eliminar y modificar listar
@@ -102,7 +102,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			makina = sys.argv[1]
 			print("Preguntando la lista de usuarios de", makina)
 			subprocess.run(["salt", makina, "cmd.run", "net users"])
-	elif comando.lower() == "ejecutar":
+	elif comando.lower() == "ejecutar":		# ejecuta un comando en el minion
 			makina = sys.argv[1]
 			coman = sys.argv[3]
 			coman = str(coman)
@@ -114,16 +114,30 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	elif comando.lower() == "tareas":
 		print("Tareas.....")
 		if len(sys.argv) != 4:
-			print("Error: debes especificar una accion para tareas")
+			print("Error: debes especificar una accion para tareas\nAcciones: crear, listar y eliminar")
 		else:
-			subcom = ["crear", "eliminar"]
+			subcom = ["crear", "eliminar", "listar"]
+			makina = sys.argv[1]
 			if sys.argv[3] not in subcom:
 				print("Error: no puedo", sys.argv[3],"una tarea")
 			elif sys.argv[3] == "crear":
 				nom = input("Nombre de la tarea: ")
-				cmd = "'"
+				cmd = "cmd='"
 				cmd = cmd + input("Comando a ejecutar: ")
 				cmd = cmd + "'"
+				trigger = ""
+				trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
+				trigs = ["1","2"]
+				while trigger not in trigs:
+					print("Error: selecciona 1 o 2")
+					trigger = input("Trigger: [1] Una vez [2] Diariamente\nSelecciona 1 o 2: ")
+				if trigger == "1":
+					trigger = "trigger_type=Once"
+				elif trigger == "2":
+					trigger = "trigger_type=Daily"
+				print("Seleccionaste", trigger)
+				x = input("Hora de inicio de tarea: ")
+				hora = "start_time="+x
 				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd)
 				sino = ["si","no"]
 				resp = input("Proceder: si o no? ")
@@ -132,10 +146,30 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					resp = input("Proceder: si o no? ")
 				if resp.lower() == "si":
 					print("Ejecutar win.task_create")
+					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute",cmd, trigger,hora])
+					print(makina)
 				elif resp.lower() == "no":
 					print("Cancelando....")
 					sys.exit()
+			elif sys.argv[3] == "listar":
+				makina = sys.argv[1]
+				subprocess.run(["salt", makina, "task.list_tasks"])
+				sys.exit()
 
+			elif sys.argv[3] == "eliminar":
+				makina = sys.argv[1]
+				subprocess.run(["salt", makina, "task.list_tasks"])
+				print("Estas son las tareas disponibles.")
+				victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
+				subprocess.run(["salt", makina, "task.delete_task", victim])
+				sys.exit()
+			elif sys.argv[3] == "info":
+				makina = sys.argv[1]
+				subprocess.run(["salt", makina, "task.list_tasks"])
+				print("Estas son las tareas disponibles.")
+				victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
+				subprocess.run(["salt", makina, "task.info", victim])
+				sys.exit()
 
 
 
