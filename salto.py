@@ -154,7 +154,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				x = input("Hora de inicio de tarea: ")
 				x = str(x)
 				hora = "start_time=\'"+x+"\'"
-				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd)
+				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd, "y argumentos", args)
 				sino = ["si","no"]
 				resp = input("Proceder: si o no? ")
 				while resp not in sino:
@@ -185,13 +185,22 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					sys.exit()
 				elif len(sys.argv) > 5:
 					print("Error: Las tareas se eliminan de una en una.\nError de sintaxis.")
+					sys.exit()
 			elif sys.argv[3] == "info":
 				makina = sys.argv[1]
-				subprocess.run(["salt", makina, "task.list_tasks"])
-				print("Estas son las tareas disponibles.")
-				victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
-				subprocess.run(["salt", makina, "task.info", victim])
-				sys.exit()
+				if len(sys.argv) == 5:
+					print("Doxeando la tarea", sys.argv[4])
+					subprocess.run(["salt", makina, "task.info", sys.argv[4]])
+					sys.exit()
+				elif len(sys.argv) == 4:
+					subprocess.run(["salt", makina, "task.list_tasks"])
+					print("Estas son las tareas disponibles.")
+					victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
+					subprocess.run(["salt", makina, "task.info", victim])
+					sys.exit()
+				elif len(sys.argv) > 5:
+					print("Error: Las tareas se doxean de una en una.\nError de sintaxis.")
+					sys.exit()
 
 
 
