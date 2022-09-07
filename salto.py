@@ -121,6 +121,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 		makina = sys.argv[1]
 		url = input("URL del archivo a descargar: ")
 		ruta = input("Ruta en el minion donde descargar (nombre fichero incluido): ")
+		cmd = "'curl " + url + " -o " + ruta + "'"
 		print("Descargar", url, "en", ruta,)
 		sino = ["si", "no"]
 		resp = input("Proceder: si o no? ")
@@ -128,18 +129,16 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			print("ERROR: debes responder 'si' o 'no'")
 			resp = input("Proceder: si o no? ")
 		if resp.lower() == "si":  # creamos tarea
-			print("Ejecutando win.task_create en", makina, "....")
+			print("Comprobando si curl esta instalado en", makina, "....")
 			subprocess.run(["salt", makina, "chocolatey.install_missing", "curl" ])
-			subprocess.run(["salt", makina, "cmd.run", "curl", url,"-o",ruta])
+			print("Descargando", url, "........")
+			subprocess.run(["salt", makina, "cmd.run", cmd])
+			x = "'dir " + ruta + "'"
+			subprocess.run(["salt", makina, "cmd.run", x])
+			sys.exit()
 		elif resp.lower() == "no":  # cancelamos
 			print("Cancelando....")
 			sys.exit()
-		""" 
-		falta poner un estas seguro si/no
-		estructura de control para ese si/no
-		no -> pass
-		si -> cmd.run 'curl url -o ruta' 
-		"""
 
 
 
