@@ -245,7 +245,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			subprocess.run(["salt", makina, "cmd.run", descarga])
 			print("Creando la tarea programada para ejecutar update.exe como", usuario, "...")
 			person = "user_name=" + usuario
-			cmd = "cmd='c:\\temp\update.exe'"
+			cmd = "cmd=\'c:\\temp\update.exe\'"
 			hora = "start_time=\'" + hora + "\'"
 			subprocess.run(["salt", makina, "task.create_task", "update_d", person, "force=True",
 							"action_type=Execute", cmd , "trigger_type=Once", hora])
