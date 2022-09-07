@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 """COSAS POR HACER:
 
++ listar minions
++ ejecutar comando en lista de minions (archivo)
+
 """
 
 
@@ -11,7 +14,8 @@ import sys
 import os
 from time import sleep
 
-comandos = ["instalar","actualizar","reset","ping","info","list_users", "ejecutar", "tareas","descargar"]	# comandos soportados por salto.py
+comandos = ["instalar","actualizar","reset","ping","info","list_users", "ejecutar", "tareas",
+			"descargar",]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
@@ -33,6 +37,9 @@ else:
 		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
 		print("* descargar: descarga un archivo en una ruta indicada del minion")
 		print("----------------------------------------------------------------------------------")
+		print("* salto lote archivo.csv 'comando a ejecutar':")
+		print("Ejecuta el comando en una lista de minions en un archivo CSV")
+		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
 		print("* tareas eliminar (tarea): elimina una tarea programada del minion.")
@@ -44,6 +51,49 @@ else:
 		print("Ej.: sudo salto MINION reset pepe abc123")
 		print("Ej.: sudo salto MINION ejecutar 'dir c:\\windows\\'\n")
 		sys.exit()
+
+# Ejecucion de comandos en lista de minions dada por un archivo CSV
+
+	elif sys.argv[1] == "lote":
+		if len(sys.argv) == 2:
+			print("ERROR: falta el archivo con la lista de minions")
+			sys.exit()
+		elif len(sys.argv) == 3:
+			f = open(sys.argv[2], "r")
+			minions = f.read()
+			minions = minions.replace("\n", "")
+			f.close()
+			cmd = "'" + input("Comando a ejecutar en lote de minions: ")
+			cmd = cmd + "'"
+			print("Comando a ejecutar:", cmd)
+			print("Minions:", minions)
+			sino = ["si", "no"]
+			resp = input("Proceder: si o no? ")
+			while resp not in sino:  # bucle, o si o no
+				print("ERROR: debes responder 'si' o 'no'")
+				resp = input("Proceder: si o no? ")
+			if resp.lower() == "si":  # ejecutamos
+				print("Ejecutando el comando en los minions seleccionados...")
+				subprocess.run(["salt", "-L", minions, "cmd.run", cmd])
+				sys.exit()
+			elif resp.lower() == "no":  # cancelamos
+				print("Cancelando....")
+				sys.exit()
+		elif len(sys.argv) == 4:
+			f = open(sys.argv[2], "r")
+			minions = f.read()
+			minions = minions.replace("\n", "")
+			f.close()
+			cmd = sys.argv[3]
+			print("Ejecutando el comando en los minions seleccionados...")
+			subprocess.run(["salt", "-L", minions, "cmd.run", cmd])
+			sys.exit()
+		elif len(sys.argv) > 4:
+			print("ERROR: Error de sintaxis\nLa forma correcta es \"salto lote lista.txt 'comando a ejecutar'\"")
+			sys.exit()
+
+# Menu ayuda
+
 	elif len(sys.argv) == 2:
 		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar y tareas")
@@ -56,6 +106,9 @@ else:
 		print("* list_users: devuelve lista de usuarios en el minion ")
 		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
 		print("* descargar: descarga un archivo en una ruta indicada del minion")
+		print("----------------------------------------------------------------------------------")
+		print("* salto lote archivo.csv 'comando a ejecutar':")
+		print("Ejecuta el comando en una lista de minions en un archivo CSV")
 		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
@@ -144,7 +197,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 
 
 
-#BLOQUE TAREAS EN DESARROLLO
+#BLOQUE TAREAS
 
 	elif comando.lower() == "tareas":
 		print("Tareas.....")
