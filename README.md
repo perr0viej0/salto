@@ -1,7 +1,7 @@
 # salto
 script python para automatizar operaciones con saltstack y tener "one liners" mas pequeños
 
-USO: salto MAQUINA COMANDO
+USO: salto MAQUINA COMANDO\n
 Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar y tareas
 Ejecuta 'salto minions' para ver la lista de minions en el master
 ----------------------------------------------------------------------------------
