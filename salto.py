@@ -218,6 +218,9 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			if sys.argv[3] not in subcom:
 				print("Error: no puedo", sys.argv[3],"una tarea")
 			elif sys.argv[3] == "crear":		# crear tarea
+				if len(sys.argv) > 4:
+					print("ERROR: no se pueden pasar argumentos al comando 'crear")
+					sys.exit()
 				nom = input("Nombre de la tarea: ")
 				cmd = "cmd='"
 				cmd = cmd + input("Comando a ejecutar: ")
