@@ -27,6 +27,7 @@ else:
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar, descargar y tareas")
+		print("Ejecuta 'salto minions' para ver la lista de minions en el master")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
@@ -50,6 +51,13 @@ else:
 		print("Ej.: sudo salto MINION instalar malwarebytes")
 		print("Ej.: sudo salto MINION reset pepe abc123")
 		print("Ej.: sudo salto MINION ejecutar 'dir c:\\windows\\'\n")
+		sys.exit()
+
+# Lista de Minions activos en master
+
+	elif sys.argv[1] == "minions":
+		print("Consultando la lista de minions.....")
+		subprocess.run(["salt-key","-L"])
 		sys.exit()
 
 # Ejecucion de comandos en lista de minions dada por un archivo CSV
@@ -97,6 +105,7 @@ else:
 	elif len(sys.argv) == 2:
 		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
 		print("Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar y tareas")
+		print("Ejecuta 'salto minions' para ver la lista de minions en el master")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
