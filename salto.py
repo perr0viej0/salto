@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """COSAS POR HACER:
-- hacer que el minion descargue un fichero de internet a una ruta concreta del minion
 
-- Ordenar el Help"""
+"""
 
 
 
@@ -12,7 +11,7 @@ import sys
 import os
 from time import sleep
 
-comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar", "tareas","descargar"]	# comandos soportados por salto.py
+comandos = ["instalar","actualizar","reset","ping","info","list_users", "ejecutar", "tareas","descargar"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
@@ -23,15 +22,16 @@ else:
 		sys.exit()
 	elif sys.argv[1] == "-h" or sys.argv[1] == "--help":	# ayuda
 		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
+		print("Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar, descargar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
-		print("* instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
-		print("* actualiza: actualiza windows del minion seleccionado")
+		print("* instala: instalar <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("* actualiza: actualizar windows del minion seleccionado")
 		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
 		print("* list_users: devuelve lista de usuarios en el minion ")
-		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
+		print("* descargar: descarga un archivo en una ruta indicada del minion")
 		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
@@ -39,21 +39,23 @@ else:
 		print("* tareas listar: lista todas las tareas programadas del minion")
 		print("* tareas info (tarea): devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
-		print("Ej.: sudo salto MINION actualiza")
-		print("Ej.: sudo salto MINION instala malwarebytes")
-		print("Ej.: sudo salto MINION reset pepe abc123\n")
+		print("Ej.: sudo salto MINION actualizar")
+		print("Ej.: sudo salto MINION instalar malwarebytes")
+		print("Ej.: sudo salto MINION reset pepe abc123")
+		print("Ej.: sudo salto MINION ejecutar 'dir c:\\windows\\'\n")
 		sys.exit()
 	elif len(sys.argv) == 2:
 		print("\nsalto\nUSO: salto <MAQUINA> <COMANDO>")
-		print("Comandos disponibles: info, ping, instala, actualiza, reset, list_users, ejecutar y tareas")
+		print("Comandos disponibles: info, ping, instalar, actualizar, reset, list_users, ejecutar y tareas")
 		print("----------------------------------------------------------------------------------")
 		print("* info: devuelve los valores de los grains del minion seleccionado")
 		print("* ping: realiza un test ping para ver si la maquina esta levantada")
-		print("* instala: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
-		print("* actualiza: actualiza windows del minion seleccionado")
+		print("* instalar: instala <PAQUETE> -> instala PAQUETE en minion seleccionado")
+		print("* actualizar: actualiza windows del minion seleccionado")
 		print("* reset: reset <USER> <PASS> -> cambia el passwword a PASS del usuario USER")
 		print("* list_users: devuelve lista de usuarios en el minion ")
-		print("* ejecutar: ejecutar \"<COMANDO>\" -> ejecuta comando en minion (comando entre comillas)")
+		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
+		print("* descargar: descarga un archivo en una ruta indicada del minion")
 		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
@@ -61,9 +63,10 @@ else:
 		print("* tareas listar: lista todas las tareas programadas del minion")
 		print("* tareas info (tarea): devuelve info de una tarea concreta del minion")
 		print("----------------------------------------------------------------------------------")
-		print("Ej.: sudo salto MINION actualiza")
-		print("Ej.: sudo salto MINION instala malwarebytes")
-		print("Ej.: sudo salto MINION reset pepe abc123\n")
+		print("Ej.: sudo salto MINION actualizar")
+		print("Ej.: sudo salto MINION instalar malwarebytes")
+		print("Ej.: sudo salto MINION reset pepe abc123")
+		print("Ej.: sudo salto MINION ejecutar 'dir c:\\windows\\'\n")
 		sys.exit()
 	elif len(sys.argv) >= 3:				# comprobar q el comando
 		if sys.argv[2] not in comandos:			# este en aceptados
@@ -79,7 +82,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 		sleep(1)
 		subprocess.run(["salt", makina, "grains.items"])
 
-	if comando.lower() == "actualiza":		# update de minions
+	if comando.lower() == "actualizar":		# update de minions
 		makina = sys.argv[1]
 		print("Actualizando maquina",makina,"..........")
 		subprocess.run(["salt", makina, "win_wua.list" , "install=True"])
@@ -89,7 +92,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 		print("Pingeando a",makina)
 		subprocess.run(["salt",makina,"test.ping"])
 
-	elif comando.lower() == "instala":		# instala software en minion
+	elif comando.lower() == "instalar":		# instala software en minion
 		if len(sys.argv) != 4:
 	        	print("ERROR: debes indicarme un programa para instalar")
 		else:
@@ -114,7 +117,6 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	elif comando.lower() == "ejecutar":		# ejecuta un comando en el minion
 			makina = sys.argv[1]
 			coman = sys.argv[3]
-			coman = str(coman)
 			print("Ejecutando", coman)
 			subprocess.run(["salt",makina,"cmd.run",coman])
 	elif comando.lower() =="descargar":
