@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 """COSAS POR HACER:
--
-- usar el modulo win_task para crear y modificar tareas programadas en los minions
-usuario system, dayly rep 1 hora start time
-crear eliminar y modificar listar
+- hacer que el minion descargue un fichero de internet a una ruta concreta del minion
 
 - Ordenar el Help"""
 
@@ -15,7 +12,7 @@ import sys
 import os
 from time import sleep
 
-comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar", "tareas"]	# comandos soportados por salto.py
+comandos = ["instala","actualiza","reset","ping","info","list_users", "ejecutar", "tareas","descargar"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
@@ -120,6 +117,31 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			coman = str(coman)
 			print("Ejecutando", coman)
 			subprocess.run(["salt",makina,"cmd.run",coman])
+	elif comando.lower() =="descargar":
+		makina = sys.argv[1]
+		url = input("URL del archivo a descargar: ")
+		ruta = input("Ruta en el minion donde descargar (nombre fichero incluido): ")
+		print("Descargar", url, "en", ruta,)
+		sino = ["si", "no"]
+		resp = input("Proceder: si o no? ")
+		while resp not in sino:  # bucle, o si o no
+			print("ERROR: debes responder 'si' o 'no'")
+			resp = input("Proceder: si o no? ")
+		if resp.lower() == "si":  # creamos tarea
+			print("Ejecutando win.task_create en", makina, "....")
+			subprocess.run(["salt", makina, "chocolatey.install_missing", "curl" ])
+			subprocess.run(["salt", makina, "cmd.run", "curl", url,"-o",ruta])
+		elif resp.lower() == "no":  # cancelamos
+			print("Cancelando....")
+			sys.exit()
+		""" 
+		falta poner un estas seguro si/no
+		estructura de control para ese si/no
+		no -> pass
+		si -> cmd.run 'curl url -o ruta' 
+		"""
+
+
 
 #BLOQUE TAREAS EN DESARROLLO
 
@@ -154,7 +176,50 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				x = input("Hora de inicio de tarea: ")
 				x = str(x)
 				hora = "start_time=\'"+x+"\'"
-				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd, "y argumentos", args)
+				rep = input("Quieres que la tarea se repita? si/no: ")
+				reps = ["si","no"]
+				while rep not in reps:
+					print("Error: escribe 'si' o 'no'.")
+					rep = input("Quieres que la tarea se repita? si/no: ")
+				if rep == "si":
+					lapsus = "repeat_interval='"
+					print("Opciones validas: [1]: 5minutos, [2]: 10minutos, [3]: 15minutos, [4]: 30minutos, [5]: 1hora")
+					selec = input("Elige una de las opciones validas: ")
+					opts =["1","2","3","4","5"]
+					while selec not in opts:
+						print("Error: Selecciona una de las opciones correctas")
+						print("Opciones validas: [1]: 5minutos, [2]: 10minutos, [3]: 15minutos, [4]: 30minutos, [5]: 1hora")
+						selec = input("Elige una de las opciones validas: ")
+					if selec == "1":
+						lapsus = lapsus + "5 minutes'"
+					elif selec == "2":
+						lapsus == lapsus + "10 minutes'"
+					elif selec == "3":
+						lapsus = lapsus + "15 minutes'"
+					elif selec == "4":
+						lapsus = lapsus + "30 minutes'"
+					elif selec == "5":
+						lapsus = lapsus + "1 hour'"
+					print("vamos a", sys.argv[3], "la tarea", nom, "con el comando", cmd, "y argumentos", args, )
+					print("Hora de inicio:", hora, "- Repeticion:",lapsus)
+					sino = ["si", "no"]
+					resp = input("Proceder: si o no? ")
+					while resp not in sino:  # bucle, o si o no
+						print("ERROR: debes responder 'si' o 'no'")
+						resp = input("Proceder: si o no? ")
+					if resp.lower() == "si":  # creamos tarea
+						print("Ejecutando win.task_create en", makina, "....")
+						subprocess.run(["salt", makina, "task.create_task", nom, "user_name=System", "force=True",
+										"action_type=Execute", cmd, args, trigger, hora, lapsus])
+						sys.exit()
+					elif resp.lower() == "no":  # cancelamos
+						print("Cancelando....")
+						sys.exit()
+
+				elif rep == "no":
+					print("Creando tarea sin intervalo de repeticion")
+				print("vamos a",sys.argv[3],"la tarea",nom,"con el comando",cmd, "y argumentos", args,)
+				print("Hora de inicio:",hora,)
 				sino = ["si","no"]
 				resp = input("Proceder: si o no? ")
 				while resp not in sino:	# bucle, o si o no
@@ -162,7 +227,9 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 					resp = input("Proceder: si o no? ")
 				if resp.lower() == "si":		# creamos tarea
 					print("Ejecutando win.task_create en",makina,"....")
-					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True", "action_type=Execute", cmd, args, trigger, hora])
+					subprocess.run(["salt", makina, "task.create_task", nom,"user_name=System", "force=True",
+									"action_type=Execute", cmd, args, trigger, hora])
+					sys.exit()
 				elif resp.lower() == "no":		# cancelamos
 					print("Cancelando....")
 					sys.exit()
