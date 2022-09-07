@@ -27,6 +27,9 @@ Ejecuta el comando en una lista de minions en un archivo (un minion por linea)
 * tareas info (tarea): devuelve info de una tarea concreta del minion
 -----------------------------------------------------------------------------------
 Ej.: sudo salto MINION actualizar
+
 Ej.: sudo salto MINION instalar malwarebytes
+
 Ej.: sudo salto MINION reset pepe abc123
+
 Ej.: sudo salto MINION ejecutar 'dir c:\windows\'
