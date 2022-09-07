@@ -15,7 +15,7 @@ import os
 from time import sleep
 
 comandos = ["instalar","actualizar","reset","ping","info","list_users", "ejecutar", "tareas",
-			"descargar",]	# comandos soportados por salto.py
+			"descargar", "update_d"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
@@ -60,7 +60,7 @@ else:
 		subprocess.run(["salt-key","-L"])
 		sys.exit()
 
-# Ejecucion de comandos en lista de minions dada por un archivo CSV
+# Ejecucion de comandos en lista de minions dada por un archivo (un minion por linea)
 
 	elif sys.argv[1] == "lote":
 		if len(sys.argv) == 2:
@@ -138,21 +138,30 @@ else:
 try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 	comando = sys.argv[2]	# probamos por si acaso
 
+# INFO DEL MINION
+
 	if comando.lower() == "info":	# info de la maquina
 		makina = sys.argv[1]
 		print("Doxeando.........")
 		sleep(1)
 		subprocess.run(["salt", makina, "grains.items"])
 
+# WIN UPDATE DE MINION
+
 	if comando.lower() == "actualizar":		# update de minions
 		makina = sys.argv[1]
 		print("Actualizando maquina",makina,"..........")
 		subprocess.run(["salt", makina, "win_wua.list" , "install=True"])
 
+# TEST PING A MINION
+
 	elif comando.lower() == "ping":			# ping de minions
 		makina = sys.argv[1]
 		print("Pingeando a",makina)
 		subprocess.run(["salt",makina,"test.ping"])
+
+
+# INSTALAR PAQUETE EN MINION
 
 	elif comando.lower() == "instalar":		# instala software en minion
 		if len(sys.argv) != 4:
@@ -161,6 +170,8 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 				makina = sys.argv[1]
 				print("Instalando",sys.argv[3],"en",makina,"...")
 				subprocess.run(["salt",makina,"chocolatey.install",sys.argv[3]])
+
+# RESETEAR PASSWORD DE USUARIO DE MINION
 
 	elif comando.lower() == "reset":		# reset user y pass minion
 		if len(sys.argv) != 5:
@@ -172,15 +183,24 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			str = "net user "+user+" "+passwd
 			print("Reseteando pass para",user," // Nueva password:",passwd)
 			subprocess.run(["salt", makina, "cmd.run",str])
+
+# LISTAR USUARIOS DEL MINION
+
 	elif comando.lower() == "list_users":	# lista los users del minion
 			makina = sys.argv[1]
 			print("Preguntando la lista de usuarios de", makina)
 			subprocess.run(["salt", makina, "cmd.run", "net users"])
+
+# EJECUTAR
+
 	elif comando.lower() == "ejecutar":		# ejecuta un comando en el minion
 			makina = sys.argv[1]
 			coman = sys.argv[3]
 			print("Ejecutando", coman)
 			subprocess.run(["salt",makina,"cmd.run",coman])
+
+# DESCARGAR
+
 	elif comando.lower() =="descargar":
 		makina = sys.argv[1]
 		url = input("URL del archivo a descargar: ")
@@ -204,6 +224,32 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 			print("Cancelando....")
 			sys.exit()
 
+# UPDATE DESATENDIDA (eliminar .exe de c:\temp, descargar un exe y crear tarea para ejecutar exe)
+
+	elif comando.lower() == "update_d":
+		if len(sys.argv) < 6:
+			print("ERROR: faltan argumentos.\nUso: salto minion update_d url hora usuario")
+			sys.exit()
+		elif len(sys.argv) == 6:
+			makina = sys.argv[1]
+			url = sys.argv[3]
+			hora = sys.argv[4]
+			usuario = sys.argv[5]
+			borra = "'del /q /f c:\\temp\*.exe'"
+			descarga = "'curl " + url + " -o " + "c:\\temp\\update.exe" + "'"
+			print("Eliminando todos los .exe de c:\\temp....")
+			subprocess.run(["salt", makina, "cmd.run", borra])
+			print("Comprobando si curl esta instalado en", makina, "....")
+			subprocess.run(["salt", makina, "chocolatey.install_missing", "curl"])
+			print("Descargando", url, "en c:\\temp\\update.exe .....")
+			subprocess.run(["salt", makina, "cmd.run", descarga])
+			print("Creando la tarea programada para ejecutar update.exe como", usuario, "...")
+			person = "user_name=" + usuario
+			cmd = "cmd='c:\\temp\update.exe"
+			hora = "start_time=\'" + hora + "\'"
+			subprocess.run(["salt", makina, "task.create_task", "update_d", person, "force=True",
+							"action_type=Execute", cmd , "trigger_type=Once", hora])
+			sys.exit()
 
 
 #BLOQUE TAREAS
