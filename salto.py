@@ -37,8 +37,8 @@ else:
 		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
 		print("* descargar: descarga un archivo en una ruta indicada del minion")
 		print("----------------------------------------------------------------------------------")
-		print("* salto lote archivo.csv 'comando a ejecutar':")
-		print("Ejecuta el comando en una lista de minions en un archivo CSV")
+		print("* salto lote archivo.txt 'comando a ejecutar':")
+		print("Ejecuta el comando en una lista de minions en un archivo (un minion por linea)")
 		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
@@ -61,7 +61,7 @@ else:
 		elif len(sys.argv) == 3:
 			f = open(sys.argv[2], "r")
 			minions = f.read()
-			minions = minions.replace("\n", "")
+			minions = minions.replace("\n", " ")
 			f.close()
 			cmd = "'" + input("Comando a ejecutar en lote de minions: ")
 			cmd = cmd + "'"
@@ -82,7 +82,7 @@ else:
 		elif len(sys.argv) == 4:
 			f = open(sys.argv[2], "r")
 			minions = f.read()
-			minions = minions.replace("\n", "")
+			minions = minions.replace("\n", " ")
 			f.close()
 			cmd = sys.argv[3]
 			print("Ejecutando el comando en los minions seleccionados...")
@@ -107,8 +107,8 @@ else:
 		print("* ejecutar: ejecutar '<COMANDO>' -> ejecuta comando en minion (comando entre comillas simples)")
 		print("* descargar: descarga un archivo en una ruta indicada del minion")
 		print("----------------------------------------------------------------------------------")
-		print("* salto lote archivo.csv 'comando a ejecutar':")
-		print("Ejecuta el comando en una lista de minions en un archivo CSV")
+		print("* salto lote archivo.txt 'comando a ejecutar':")
+		print("Ejecuta el comando en una lista de minions en un archivo (un minion por linea)")
 		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
