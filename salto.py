@@ -73,6 +73,7 @@ else:
 			print("ERROR: falta el archivo con la lista de minions")
 			sys.exit()
 		elif len(sys.argv) == 3:
+			f = open(sys.argv[2], "r")
 			minions = f.read()
 			minions = minions.replace("\n", " ")
 			f.close()
