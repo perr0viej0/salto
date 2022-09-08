@@ -1,10 +1,17 @@
 #!/usr/bin/python3
-"""COSAS POR HACER:
-
-+ listar minions
-+ ejecutar comando en lista de minions (archivo)
-
-"""
+#
+#            _ _
+#  ___  __ _| | |_ ___
+# / __|/ _` | | __/ _ \
+# \__ \ (_| | | || (_) |
+# |___/\__,_|_|\__\___/
+#
+# Pequeño script para facilitar el uso de saltstack
+#
+#
+#
+#
+#
 
 
 
@@ -15,7 +22,7 @@ import os
 from time import sleep
 
 comandos = ["instalar","actualizar","reset","ping","info","list_users", "ejecutar", "tareas",
-			"descargar", "update_d"]	# comandos soportados por salto.py
+			"descargar", "update_d", "actualizar_lote"]	# comandos soportados por salto.py
 
 if os.geteuid() != 0:
 	print("ERROR: salto debe ser ejecutado como usuario root")	# no root, no fun
@@ -60,6 +67,18 @@ else:
 		print("Consultando la lista de minions.....")
 		subprocess.run(["salt-key","-L"])
 		sys.exit()
+
+	elif sys.argv[1] == "actualizar_lote":
+		if len(sys.argv) == 2:
+			print("ERROR: falta el archivo con la lista de minions")
+			sys.exit()
+		elif len(sys.argv) == 3:
+			minions = f.read()
+			minions = minions.replace("\n", " ")
+			f.close()
+			print("Actualizando",minions)
+			subprocess.run(["salt", "-L", minions, "win_wua.list", "install=True"])
+			sys.exit()
 
 # Ejecucion de comandos en lista de minions dada por un archivo (un minion por linea)
 
@@ -148,9 +167,10 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 		sleep(1)
 		subprocess.run(["salt", makina, "grains.items"])
 
+
 # WIN UPDATE DE MINION
 
-	if comando.lower() == "actualizar":		# update de minions
+	elif comando.lower() == "actualizar":		# update de minions
 		makina = sys.argv[1]
 		print("Actualizando maquina",makina,"..........")
 		subprocess.run(["salt", makina, "win_wua.list" , "install=True"])
