@@ -49,6 +49,9 @@ else:
 		print("* salto lote archivo.txt 'comando a ejecutar':")
 		print("Ejecuta el comando en una lista de minions en un archivo (un minion por linea)")
 		print("----------------------------------------------------------------------------------")
+		print("* salto actualizar_lote archivo.txt :")
+		print("Actualiza windows de una lista de minions en un archivo (un minion por linea)")
+		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
 		print("* tareas eliminar (tarea): elimina una tarea programada del minion.")
@@ -67,6 +70,8 @@ else:
 		print("Consultando la lista de minions.....")
 		subprocess.run(["salt-key","-L"])
 		sys.exit()
+
+# Actualizar minions en lote
 
 	elif sys.argv[1] == "actualizar_lote":
 		if len(sys.argv) == 2:
@@ -141,6 +146,9 @@ else:
 		print("* salto lote archivo.txt 'comando a ejecutar':")
 		print("Ejecuta el comando en una lista de minions en un archivo (un minion por linea)")
 		print("----------------------------------------------------------------------------------")
+		print("* salto actualizar_lote archivo.txt :")
+		print("Actualiza windows de una lista de minions en un archivo (un minion por linea)")
+		print("----------------------------------------------------------------------------------")
 		print("* tareas <ACCION> (OPCION)")
 		print("* tareas crear: crea una tarea programada en el minion")
 		print("* tareas eliminar (tarea): elimina una tarea programada del minion")
@@ -188,7 +196,7 @@ try:				# si llegamoos hasta aqui es que escribieron bien los parametros
 
 	elif comando.lower() == "instalar":		# instala software en minion
 		if len(sys.argv) != 4:
-	        	print("ERROR: debes indicarme un programa para instalar")
+			print("ERROR: debes indicarme un programa para instalar")
 		else:
 				makina = sys.argv[1]
 				print("Instalando",sys.argv[3],"en",makina,"...")
