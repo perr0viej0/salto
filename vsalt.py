@@ -283,88 +283,85 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
 
         # BLOQUE TAREAS
 
-        elif comando.lower() == "tareas":
-            print("Tareas.....")
-        if len(sys.argv) < 4:  # lo has escrito bien?
-            print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
-        else:
-            subcom = ["crear", "eliminar", "listar", "info"]  # args disponibles
-            makina = sys.argv[1]
-            if sys.argv[3] not in subcom:
-                print("Error: no puedo", sys.argv[3], "una tarea")
-            elif sys.argv[3] == "crear":  # crear tarea
-                if len(sys.argv) < 11:
-                    print("ERROR: Faltan argumentos")
-                    print(
-                        "Ej.: vsalt minion tareas crear nombre_tarea usuario comando argumentos trigger hora_inicio repeticion intervalo")
-                    print("trigger: 0=once, 1=daily ; repeticion: 0=no, 1=si")
-                    print("intervalo: 5=5min, 10=10min, 15=15min, 30=30min, 1h=1hora")
-                nom = sys.argv[4]
-                user = "user_name=" + sys.argv[5]
-                cmd = "cmd='" + sys.argv[6] + "'"
-                args = "arguments='" + sys.argv[7] + "'"
-                if sys.argv[8] == "0":
-                    trigger = "trigger_type=Once"
-                elif sys.argv[8] == "1":
-                    trigger = "trigger_type=Daily"
-                x = str(sys.argv[9])
-                hora = "start_time=\'" + x + "\'"
-                rep = sys.argv[10]
-                if rep == "0":
-                    subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
-                                    "action_type=Execute", cmd, args, trigger, hora])
-                    sys.exit()
-                elif rep == "1":
-                    if sys.argv[11] == "5":
-                        lapsus = "repeat_interval='5 minutes'"
-                    elif sys.argv[11] == "10":
-                        lapsus = "repeat_interval='10 minutes'"
-                    elif sys.argv[11] == "15":
-                        lapsus = "repeat_interval='15 minutes'"
-                    elif sys.argv[11] == "30":
-                        lapsus = "repeat_interval='30 minutes'"
-                    elif sys.argv[11] == "1h":
-                        lapsus = "repeat_interval='1 hour'"
-                    subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
-                                    "action_type=Execute", cmd, args, trigger, hora, lapsus])
-                    sys.exit()
-            elif sys.argv[3] == "listar":  # listar tareas
-                makina = sys.argv[1]
-                subprocess.run(["salt", makina, "task.list_tasks"])
+    elif comando.lower() == "tareas":
+        print("Tareas.....")
+    if len(sys.argv) < 4:  # lo has escrito bien?
+        print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
+    else:
+        subcom = ["crear", "eliminar", "listar", "info"]  # args disponibles
+        makina = sys.argv[1]
+        if sys.argv[3] not in subcom:
+            print("Error: no puedo", sys.argv[3], "una tarea")
+        elif sys.argv[3] == "crear":  # crear tarea
+            if len(sys.argv) < 11:
+                print("ERROR: Faltan argumentos")
+                print("Ej.: vsalt minion tareas crear nombre_tarea usuario comando argumentos trigger hora_inicio repeticion intervalo")
+                print("trigger: 0=once, 1=daily ; repeticion: 0=no, 1=si")
+                print("intervalo: 5=5min, 10=10min, 15=15min, 30=30min, 1h=1hora")
+            nom = sys.argv[4]
+            user = "user_name=" + sys.argv[5]
+            cmd = "cmd='" + sys.argv[6] + "'"
+            args = "arguments='" + sys.argv[7] + "'"
+            if sys.argv[8] == "0":
+                trigger = "trigger_type=Once"
+            elif sys.argv[8] == "1":
+                trigger = "trigger_type=Daily"
+            x = str(sys.argv[9])
+            hora = "start_time=\'" + x + "\'"
+            rep = sys.argv[10]
+            if rep == "0":
+                subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
+                                "action_type=Execute", cmd, args, trigger, hora])
                 sys.exit()
-
-            elif sys.argv[3] == "eliminar":  # eliminar treas
-                makina = sys.argv[1]
-                if len(sys.argv) == 5:  # si paso la tarea como arg, borrala
-                    print("Eliminando la tarea", sys.argv[4])
-                    subprocess.run(["salt", makina, "task.delete_task", sys.argv[4]])
-                    sys.exit()
-                elif len(sys.argv) == 4:  # si no te la paso, dejame elegir
-                    subprocess.run(["salt", makina, "task.list_tasks"])
-                    print("Estas son las tareas disponibles.")
-                    victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
-                    subprocess.run(["salt", makina, "task.delete_task", victim])
-                    sys.exit()
-                elif len(sys.argv) > 5:  # demasiadas tareas para un solo script
-                    print("Error: Las tareas se eliminan de una en una.\nError de sintaxis.")
-                    sys.exit()
-            elif sys.argv[3] == "info":  # info tareas
-                makina = sys.argv[1]
-                if len(sys.argv) == 5:  # si te paso la tarea como arg, doxeala
-                    print("Doxeando la tarea", sys.argv[4])
-                    subprocess.run(["salt", makina, "task.info", sys.argv[4]])
-                    sys.exit()
-                elif len(sys.argv) == 4:  # si no te la paso, dejame elegir
-                    subprocess.run(["salt", makina, "task.list_tasks"])
-                    print("Estas son las tareas disponibles.")
-                    victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
-                    subprocess.run(["salt", makina, "task.info", victim])
-                    sys.exit()
-                elif len(sys.argv) > 5:  # demasiadas tareas a doxear
-                    print("Error: Las tareas se doxean de una en una.\nError de sintaxis.")
-                    sys.exit()
-
-    # FIN BLOQUE DE TAREAS
+            elif rep == "1":
+                if sys.argv[11] == "5":
+                    lapsus = "repeat_interval='5 minutes'"
+                elif sys.argv[11] == "10":
+                    lapsus = "repeat_interval='10 minutes'"
+                elif sys.argv[11] == "15":
+                    lapsus = "repeat_interval='15 minutes'"
+                elif sys.argv[11] == "30":
+                    lapsus = "repeat_interval='30 minutes'"
+                elif sys.argv[11] == "1h":
+                    lapsus = "repeat_interval='1 hour'"
+                subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
+                                "action_type=Execute", cmd, args, trigger, hora, lapsus])
+                sys.exit()
+        elif sys.argv[3] == "listar":  # listar tareas
+            makina = sys.argv[1]
+            subprocess.run(["salt", makina, "task.list_tasks"])
+            sys.exit()
+        elif sys.argv[3] == "eliminar":  # eliminar treas
+            makina = sys.argv[1]
+            if len(sys.argv) == 5:  # si paso la tarea como arg, borrala
+                print("Eliminando la tarea", sys.argv[4])
+                subprocess.run(["salt", makina, "task.delete_task", sys.argv[4]])
+                sys.exit()
+            elif len(sys.argv) == 4:  # si no te la paso, dejame elegir
+                subprocess.run(["salt", makina, "task.list_tasks"])
+                print("Estas son las tareas disponibles.")
+                victim = input("Que tarea debemos eliminar? (recuerda case sensitive!!): ")
+                subprocess.run(["salt", makina, "task.delete_task", victim])
+                sys.exit()
+            elif len(sys.argv) > 5:  # demasiadas tareas para un solo script
+                print("Error: Las tareas se eliminan de una en una.\nError de sintaxis.")
+                sys.exit()
+        elif sys.argv[3] == "info":  # info tareas
+            makina = sys.argv[1]
+            if len(sys.argv) == 5:  # si te paso la tarea como arg, doxeala
+                print("Doxeando la tarea", sys.argv[4])
+                subprocess.run(["salt", makina, "task.info", sys.argv[4]])
+                sys.exit()
+            elif len(sys.argv) == 4:  # si no te la paso, dejame elegir
+                subprocess.run(["salt", makina, "task.list_tasks"])
+                print("Estas son las tareas disponibles.")
+                victim = input("Que tarea quieres ver? (recuerda case sensitive!!): ")
+                subprocess.run(["salt", makina, "task.info", victim])
+                sys.exit()
+            elif len(sys.argv) > 5:  # demasiadas tareas a doxear
+                print("Error: Las tareas se doxean de una en una.\nError de sintaxis.")
+                sys.exit()
+  # FIN BLOQUE DE TAREAS
 
 
 except IndexError:
