@@ -281,52 +281,53 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
                             "action_type=Execute", cmd, "trigger_type=Once", hora])
             sys.exit()
 
-    # BLOQUE TAREAS
+        # BLOQUE TAREAS
 
-    elif comando.lower() == "tareas":
-        print("Tareas.....")
-    if len(sys.argv) < 4:  # lo has escrito bien?
-        print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
-    else:
-        subcom = ["crear", "eliminar", "listar", "info"]  # args disponibles
-        makina = sys.argv[1]
-        if sys.argv[3] not in subcom:
-            print("Error: no puedo", sys.argv[3], "una tarea")
-        elif sys.argv[3] == "crear":  # crear tarea
-            if len(sys.argv) < 11:
-                print("ERROR: Faltan argumentos")
-                print("Ej.: vsalt minion tareas crear nombre_tarea usuario comando argumentos trigger hora_inicio repeticion intervalo")
-                print("trigger: 0=once, 1=daily ; repeticion: 0=no, 1=si")
-                print("intervalo: 5=5min, 10=10min, 15=15min, 30=30min, 1h=1hora")
-            nom = sys.argv[4]
-            user = "user_name=" + sys.argv[5]
-            cmd = "cmd='" + sys.argv[6] + "'"
-            args = "arguments='" + sys.argv[7] + "'"
-            if sys.argv[8] == "0":
-                trigger = "trigger_type=Once"
-            elif sys.argv[8] == "1":
-                trigger = "trigger_type=Daily"
-            x = str(sys.argv[9])
-            hora = "start_time=\'" + x + "\'"
-            rep = sys.argv[10]
-            if rep == "0":
-                subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
-                                "action_type=Execute", cmd, args, trigger, hora])
-                sys.exit()
-            elif rep == "1":
-                if sys.argv[11] == "5":
-                    lapsus = "repeat_interval='5 minutes'"
-                elif sys.argv[11] == "10":
-                    lapsus = "repeat_interval='10 minutes'"
-                elif sys.argv[11] == "15":
-                    lapsus = "repeat_interval='15 minutes'"
-                elif sys.argv[11] == "30":
-                    lapsus = "repeat_interval='30 minutes'"
-                elif sys.argv[11] == "1h":
-                    lapsus = "repeat_interval='1 hour'"
-                subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
-                                "action_type=Execute", cmd, args, trigger, hora, lapsus])
-                sys.exit()
+        elif comando.lower() == "tareas":
+            print("Tareas.....")
+        if len(sys.argv) < 4:  # lo has escrito bien?
+            print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
+        else:
+            subcom = ["crear", "eliminar", "listar", "info"]  # args disponibles
+            makina = sys.argv[1]
+            if sys.argv[3] not in subcom:
+                print("Error: no puedo", sys.argv[3], "una tarea")
+            elif sys.argv[3] == "crear":  # crear tarea
+                if len(sys.argv) < 11:
+                    print("ERROR: Faltan argumentos")
+                    print(
+                        "Ej.: vsalt minion tareas crear nombre_tarea usuario comando argumentos trigger hora_inicio repeticion intervalo")
+                    print("trigger: 0=once, 1=daily ; repeticion: 0=no, 1=si")
+                    print("intervalo: 5=5min, 10=10min, 15=15min, 30=30min, 1h=1hora")
+                nom = sys.argv[4]
+                user = "user_name=" + sys.argv[5]
+                cmd = "cmd='" + sys.argv[6] + "'"
+                args = "arguments='" + sys.argv[7] + "'"
+                if sys.argv[8] == "0":
+                    trigger = "trigger_type=Once"
+                elif sys.argv[8] == "1":
+                    trigger = "trigger_type=Daily"
+                x = str(sys.argv[9])
+                hora = "start_time=\'" + x + "\'"
+                rep = sys.argv[10]
+                if rep == "0":
+                    subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
+                                    "action_type=Execute", cmd, args, trigger, hora])
+                    sys.exit()
+                elif rep == "1":
+                    if sys.argv[11] == "5":
+                        lapsus = "repeat_interval='5 minutes'"
+                    elif sys.argv[11] == "10":
+                        lapsus = "repeat_interval='10 minutes'"
+                    elif sys.argv[11] == "15":
+                        lapsus = "repeat_interval='15 minutes'"
+                    elif sys.argv[11] == "30":
+                        lapsus = "repeat_interval='30 minutes'"
+                    elif sys.argv[11] == "1h":
+                        lapsus = "repeat_interval='1 hour'"
+                    subprocess.run(["salt", makina, "task.create_task", nom, user, "force=True",
+                                    "action_type=Execute", cmd, args, trigger, hora, lapsus])
+                    sys.exit()
             elif sys.argv[3] == "listar":  # listar tareas
                 makina = sys.argv[1]
                 subprocess.run(["salt", makina, "task.list_tasks"])
@@ -363,9 +364,8 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
                     print("Error: Las tareas se doxean de una en una.\nError de sintaxis.")
                     sys.exit()
 
+    # FIN BLOQUE DE TAREAS
 
-
-# FIN BLOQUE DE TAREAS
 
 except IndexError:
     print("Uno o mas argumentos son incorrectos, revisa el oneliner")
