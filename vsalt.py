@@ -31,8 +31,7 @@ else:
         sys.exit()
     elif sys.argv[1] == "-h" or sys.argv[1] == "--help":  # ayuda
         print("\nvsalt\nUSO: vsalt <MAQUINA> <COMANDO>")
-        print(
-            "Comandos disponibles: info, ping, instalar, actualizar, update_d, reset, list_users, ejecutar, descargar y tareas")
+        print("Comandos disponibles: info, ping, instalar, actualizar, update_d, reset, list_users, ejecutar, descargar y tareas")
         print("Ejecuta 'vsalt minions' para ver la lista de minions en el master")
         print("----------------------------------------------------------------------------------")
         print("* info: devuelve los valores de los grains del minion seleccionado")
@@ -174,6 +173,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
         print("Doxeando.........")
         sleep(1)
         subprocess.run(["salt", makina, "grains.items"])
+        sys.exit()
 
 
     # WIN UPDATE DE MINION
@@ -182,6 +182,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
         makina = sys.argv[1]
         print("Actualizando maquina", makina, "..........")
         subprocess.run(["salt", makina, "win_wua.list", "install=True"])
+        sys.exit()
 
     # TEST PING A MINION
 
@@ -189,6 +190,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
         makina = sys.argv[1]
         print("Pingeando a", makina)
         subprocess.run(["salt", makina, "test.ping"])
+        sys.exit()
 
 
     # INSTALAR PAQUETE EN MINION
@@ -196,16 +198,19 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
     elif comando.lower() == "instalar":  # instala software en minion
         if len(sys.argv) != 4:
             print("ERROR: debes indicarme un programa para instalar")
+            sys.exit()
         else:
             makina = sys.argv[1]
             print("Instalando", sys.argv[3], "en", makina, "...")
             subprocess.run(["salt", makina, "chocolatey.install", sys.argv[3]])
+            sys.exit()
 
     # RESETEAR PASSWORD DE USUARIO DE MINION
 
     elif comando.lower() == "reset":  # reset user y pass minion
         if len(sys.argv) != 5:
             print("ERROR: debes indicar usuario y password")
+            sys.exit()
         else:
             makina = sys.argv[1]
             user = sys.argv[3]
@@ -213,6 +218,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
             str = "net user " + user + " " + passwd
             print("Reseteando pass para", user, " // Nueva password:", passwd)
             subprocess.run(["salt", makina, "cmd.run", str])
+            sys.exit()
 
     # LISTAR USUARIOS DEL MINION
 
@@ -220,6 +226,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
         makina = sys.argv[1]
         print("Preguntando la lista de usuarios de", makina)
         subprocess.run(["salt", makina, "cmd.run", "net users"])
+        sys.exit()
 
     # EJECUTAR
 
@@ -228,6 +235,7 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
         coman = sys.argv[3]
         print("Ejecutando", coman)
         subprocess.run(["salt", makina, "cmd.run", coman])
+        sys.exit()
 
     # DESCARGAR
 
@@ -285,9 +293,10 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
 
     elif comando.lower() == "tareas":
         print("Tareas.....")
-    if len(sys.argv) < 4:  # lo has escrito bien?
-        print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
-    else:
+        if len(sys.argv) < 4:  # lo has escrito bien?
+            print("Error: debes especificar una accion para tareas\nAcciones: crear, listar, info y eliminar")
+            sys.exit()
+
         subcom = ["crear", "eliminar", "listar", "info"]  # args disponibles
         makina = sys.argv[1]
         if sys.argv[3] not in subcom:
@@ -366,3 +375,4 @@ try:  # si llegamoos hasta aqui es que escribieron bien los parametros
 
 except IndexError:
     print("Uno o mas argumentos son incorrectos, revisa el oneliner")
+    sys.exit()
